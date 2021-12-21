@@ -1784,19 +1784,22 @@ VALUES
         }
         public void SetFanState(bool state)
         {
-            if (state)
+            if (arduinoPort.IsOpen)
             {
-                FanEnabled = true;
-                FanButton.Source = BitmapFrame.Create(new Uri(UriFan));
-                FanButton.ToolTip = "Выключить вентилятор";
-                arduinoPort.Write("switchFan true");
-            }
-            else
-            {
-                FanEnabled = false;
-                FanButton.Source = BitmapFrame.Create(new Uri(UriFanOff));
-                FanButton.ToolTip = "Включить вентилятор";
-                arduinoPort.Write("switchFan false");
+                if (state)
+                {
+                    FanEnabled = true;
+                    FanButton.Source = BitmapFrame.Create(new Uri(UriFan));
+                    FanButton.ToolTip = "Выключить вентилятор";
+                    arduinoPort.Write("switchFan true");
+                }
+                else
+                {
+                    FanEnabled = false;
+                    FanButton.Source = BitmapFrame.Create(new Uri(UriFanOff));
+                    FanButton.ToolTip = "Включить вентилятор";
+                    arduinoPort.Write("switchFan false");
+                }
             }
         }
         //Notification notification;
