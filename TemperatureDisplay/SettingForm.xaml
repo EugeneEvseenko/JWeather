@@ -1,0 +1,476 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:toast="clr-namespace:Toast;assembly=Toast" 
+        x:Name="SettingsForm" 
+        x:Class="JWeather.SettingForm"
+        Title="Настройки JWeather" Height="549" Width="809" AllowsTransparency="True" Background="Transparent" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None" Loaded="SettingsForm_Loaded" Closing="SettingsForm_Closing" Activated="SettingsForm_Activated" Deactivated="SettingsForm_Deactivated" Icon="Images/settings.png">
+    <Window.Resources>
+        <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="20" />
+                </Grid.ColumnDefinitions>
+                <Border
+                  x:Name="Border" 
+                  Grid.ColumnSpan="2"
+                  CornerRadius="0"
+                  Background="White"
+                  BorderBrush="#FF97A0A5"
+                  BorderThickness="0" />
+                <Border 
+                  Grid.Column="0"
+                  CornerRadius="0" 
+                  Margin="0" 
+                  Background="White" 
+                  BorderBrush="{Binding Background, ElementName=SettingsLayout}"
+                  BorderThickness="0,0,1,0" />
+                <Path 
+                  x:Name="Arrow"
+                  Grid.Column="1"     
+                  Fill="{Binding Background, ElementName=SettingsLayout}"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Data="M0,0 L0,2 L4,6 L8,2 L8,0 L4,4 z"
+                />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="ToggleButton.IsMouseOver" Value="true">
+                    <Setter TargetName="Border" Property="Opacity" Value="0.8" />
+                </Trigger>
+                <Trigger Property="ToggleButton.IsChecked" Value="true">
+                    <Setter TargetName="Border" Property="Background" Value="#E0E0E0" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter TargetName="Border" Property="Background" Value="#EEEEEE" />
+                    <Setter TargetName="Border" Property="BorderBrush" Value="#AAAAAA" />
+                    <Setter Property="Foreground" Value="#888888"/>
+                    <Setter TargetName="Arrow" Property="Fill" Value="#888888" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="ComboBoxTextBox" TargetType="{x:Type TextBox}">
+            <Border x:Name="PART_ContentHost" Focusable="False" Background="{TemplateBinding Background}" />
+        </ControlTemplate>
+        <Style x:Key="{x:Type ComboBox}" TargetType="{x:Type ComboBox}">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+            <Setter Property="MinHeight" Value="20"/>
+            <Setter Property="Foreground" Value="{Binding Background, ElementName=SettingsLayout}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBox}">
+                        <Grid>
+                            <ToggleButton 
+                            Name="ToggleButton" 
+                            Template="{StaticResource ComboBoxToggleButton}" 
+                            Grid.Column="2" 
+                            Focusable="false"
+                            IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
+                            ClickMode="Press">
+                            </ToggleButton>
+                            <ContentPresenter Name="ContentSite" IsHitTestVisible="False"  Content="{TemplateBinding SelectionBoxItem}"
+                            ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                            ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                            Margin="3,3,23,3"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left" />
+                            <TextBox x:Name="PART_EditableTextBox"
+                            Style="{x:Null}" 
+                            Template="{StaticResource ComboBoxTextBox}" 
+                            HorizontalAlignment="Left" 
+                            VerticalAlignment="Center" 
+                            Margin="3,3,23,3"
+                            Focusable="True" 
+                            Background="{Binding Background, ElementName=SettingsLayout}"
+                            Foreground="Green"
+                            Visibility="Hidden"
+                            IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                            <Popup 
+                            Name="Popup"
+                            Placement="Bottom"
+                            IsOpen="{TemplateBinding IsDropDownOpen}"
+                            AllowsTransparency="True" 
+                            Focusable="False"
+                            PopupAnimation="Slide">
+
+                                <Grid Name="DropDown"
+                              SnapsToDevicePixels="True"                
+                              MinWidth="{TemplateBinding ActualWidth}"
+                              MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border 
+                                x:Name="DropDownBorder"
+                                Background="White"
+
+                                BorderThickness="0"
+                                BorderBrush="#888888"/>
+                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasItems" Value="false">
+                                <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsGrouping" Value="true">
+                                <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                            </Trigger>
+                            <Trigger SourceName="Popup" Property="Popup.AllowsTransparency" Value="true">
+                                <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="0"/>
+                                <Setter TargetName="DropDownBorder" Property="Margin" Value="0,2,0,0"/>
+                            </Trigger>
+                            <Trigger Property="IsEditable"  Value="true">
+                                <Setter Property="IsTabStop" Value="false"/>
+                                <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+            </Style.Triggers>
+        </Style>
+
+        <!-- SimpleStyles: ComboBoxItem -->
+        <Style x:Key="{x:Type ComboBoxItem}" TargetType="{x:Type ComboBoxItem}">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="Foreground" Value="{Binding Background, ElementName=SettingsLayout}"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                        <Border Name="Border"
+                              Padding="2"
+                              SnapsToDevicePixels="true">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="#FFEEEEEE"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="TextBox.Static.Border" Color="#FFABAdB3"/>
+        <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FF7EB4EA"/>
+        <SolidColorBrush x:Key="TextBox.Focus.Border" Color="#FF569DE5"/>
+        <Style x:Key="TextBoxStyleOptions" TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TextBox.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="border" Opacity="1.0" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Opacity" TargetName="border" Value="0.9"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="false">
+                                <Setter Property="Opacity" TargetName="border" Value="1.0"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter Property="Opacity" TargetName="border" Value="1.0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true"/>
+                        <Condition Property="IsSelectionActive" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+                </MultiTrigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+    <Grid Margin="15" x:Name="SettingsLayout" Background="#FF161666" MouseLeftButtonDown="SettingsLayout_MouseLeftButtonDown">
+        <Grid.OpacityMask>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="Black"/>
+                <GradientStop Color="#E5FFFFFF" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.OpacityMask>
+        <Grid.Effect>
+            <DropShadowEffect x:Name="dropShadowWindow" BlurRadius="15" Direction="-90" RenderingBias="Quality" ShadowDepth="2" Opacity="0.5"/>
+        </Grid.Effect>
+        <Image x:Name="CloseButton" HorizontalAlignment="Left" Height="20" Margin="749,10,0,0" VerticalAlignment="Top" Width="20" Source="Images/close.png" Cursor="Hand" ToolTip="Выход" MouseLeftButtonDown="CloseButton_MouseLeftButtonDown"/>
+        <ScrollViewer x:Name="optionVolume" Margin="264,30,0,0" Visibility="Hidden">
+            <Grid Background="{Binding Background, ElementName=SettingsLayout}">
+                <Slider x:Name="sliderV" Height="22" Width="290" Margin="40,54,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" LargeChange="5" Maximum="100" Minimum="40" Cursor="Hand" SmallChange="5" TickFrequency="5" ToolTip="Перемещайте ползунок для изменения прозрачности полноэкранного режима отображения даты и времени." ValueChanged="SliderV_ValueChanged"/>
+                <Label x:Name="LabelTransV" Content="Прозрачность - 100%" HorizontalAlignment="Left" Margin="40,9,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light" Grid.Row="1"/>
+                <Label x:Name="LabelVolumeTime" Content="Время отображения на экране" HorizontalAlignment="Left" Margin="40,81,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light"/>
+                <Slider x:Name="sliderVolumeTime" HorizontalAlignment="Left" Height="37" Width="290" Margin="40,126,0,0" VerticalAlignment="Top" Minimum="0.5" TickPlacement="Both" Foreground="{Binding Background, ElementName=MainGrid}" IsSnapToTickEnabled="True" Cursor="Hand" ValueChanged="SliderVolumeTime_ValueChanged" Maximum="4" TickFrequency="0.1"/>
+
+            </Grid>
+        </ScrollViewer>
+        <ScrollViewer x:Name="optionFS1" Margin="264,30,0,0" Visibility="Hidden">
+            <Grid Background="{Binding Background, ElementName=SettingsLayout}">
+                <Slider x:Name="sliderFS1" Height="22" Width="290" Margin="40,54,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" LargeChange="5" Maximum="80" Minimum="40" ValueChanged="SliderFS1_ValueChanged" Cursor="Hand" SmallChange="5" TickFrequency="5" ToolTip="Перемещайте ползунок для изменения прозрачности полноэкранного режима отображения температуры."/>
+                <Label x:Name="LabelTransFS1" Content="Прозрачность - 100%" HorizontalAlignment="Left" Margin="40,9,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light" Height="40" Width="229"/>
+                <Label x:Name="LabelVoice" Content="Озвучивание" HorizontalAlignment="Left" Margin="40,84,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light" Height="40" Width="149"/>
+                <CheckBox x:Name="voiceTempCheckBox" Content="Озвучивать текущую температуру" HorizontalAlignment="Left" Margin="40,124,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="13" FontFamily="Source Sans Pro" Style="{DynamicResource CheckBoxStyle}" Cursor="Hand" Click="VoiceTempCheckBox_Click" Height="25"/>
+                <CheckBox x:Name="voiceHumCheckBox" Content="Озвучивать текущую влажность" HorizontalAlignment="Left" Margin="40,154,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="13" FontFamily="Source Sans Pro" Style="{DynamicResource CheckBoxStyle}" Cursor="Hand" Click="VoiceHumCheckBox_Click" Height="25"/>
+                <CheckBox x:Name="voiceMaxTempCheckBox" Content="Озвучивать максимальную температуру за день" HorizontalAlignment="Left" Margin="40,184,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="13" FontFamily="Source Sans Pro" Style="{DynamicResource CheckBoxStyle}" Cursor="Hand" Click="VoiceMaxTempCheckBox_Click" Height="25"/>
+                <CheckBox x:Name="voiceMinTempCheckBox" Content="Озвучивать минимальную температуру за день" HorizontalAlignment="Left" Margin="40,214,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="13" FontFamily="Source Sans Pro" Style="{DynamicResource CheckBoxStyle}" Cursor="Hand" Click="VoiceMinTempCheckBox_Click" Height="25"/>
+                <CheckBox x:Name="voiceMaxHumCheckBox" Content="Озвучивать максимальную влажность за день" HorizontalAlignment="Left" Margin="40,244,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="13" FontFamily="Source Sans Pro" Style="{DynamicResource CheckBoxStyle}" Cursor="Hand" Click="VoiceMaxHumCheckBox_Click" Height="25"/>
+                <CheckBox x:Name="voiceMinHumCheckBox" Content="Озвучивать минимальную влажность за день" HorizontalAlignment="Left" Margin="40,274,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="13" FontFamily="Source Sans Pro" Style="{DynamicResource CheckBoxStyle}" Cursor="Hand" Click="VoiceMinHumCheckBox_Click" Height="25"/>
+                <Label x:Name="LabeTemp" Content="Время отображения на экране" HorizontalAlignment="Left" Margin="40,309,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light" Height="40"/>
+
+                <Slider x:Name="sliderTemp" HorizontalAlignment="Left" Height="40" Width="150" Margin="40,354,0,0" VerticalAlignment="Top" ValueChanged="SliderTemp_ValueChanged" SmallChange="1" Minimum="1" TickPlacement="Both" Foreground="{Binding Background, ElementName=MainGrid}" IsSnapToTickEnabled="True" Cursor="Hand"/>
+                <CheckBox x:Name="hideRecalledTemp" Content="Скрывать при повторном вызове" HorizontalAlignment="Left" Margin="40,399,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="13" FontFamily="Source Sans Pro" Style="{DynamicResource CheckBoxStyle}" Cursor="Hand" Checked="HideRecalledTemp_Checked" Unchecked="HideRecalledTemp_Unchecked"/>
+
+            </Grid>
+        </ScrollViewer>
+        <ScrollViewer x:Name="optionFS2" Margin="264,30,0,0" Visibility="Hidden">
+            <Grid Background="{Binding Background, ElementName=SettingsLayout}">
+                <Slider x:Name="sliderFS2" Height="22" Width="290" Margin="40,54,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" LargeChange="5" Maximum="80" Minimum="40" Cursor="Hand" SmallChange="5" TickFrequency="5" ToolTip="Перемещайте ползунок для изменения прозрачности полноэкранного режима отображения даты и времени." ValueChanged="SliderFS2_ValueChanged"/>
+                <Label x:Name="LabelTransFS2" Content="Прозрачность - 100%" HorizontalAlignment="Left" Margin="40,9,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light" Grid.Row="1"/>
+                <Label x:Name="LabelVoice2" Content="Озвучивание" HorizontalAlignment="Left" Margin="40,84,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light"/>
+                <CheckBox x:Name="voiceTimeCheckBox" Content="Озвучивать текущее время" HorizontalAlignment="Left" Margin="40,124,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="13" FontFamily="Source Sans Pro" Style="{DynamicResource CheckBoxStyle}" Cursor="Hand" Click="VoiceTimeCheckBox_Click"/>
+                <CheckBox x:Name="voiceDOWCheckBox" Content="Озвучивать день недели" HorizontalAlignment="Left" Margin="40,154,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="13" FontFamily="Source Sans Pro" Style="{DynamicResource CheckBoxStyle}" Cursor="Hand" Click="VoiceDOWCheckBox_Click"/>
+                <CheckBox x:Name="voiceDateCheckBox" Content="Озвучивать дату" HorizontalAlignment="Left" Margin="40,184,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="13" FontFamily="Source Sans Pro" Style="{DynamicResource CheckBoxStyle}" Cursor="Hand" Click="VoiceDateCheckBox_Click"/>
+                <Label x:Name="LabelVoiceTime" Content="Время отображения на экране" HorizontalAlignment="Left" Margin="40,214,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light"/>
+                <Slider x:Name="sliderTime" HorizontalAlignment="Left" Height="37" Width="150" Margin="40,259,0,0" VerticalAlignment="Top" SmallChange="1" Minimum="1" TickPlacement="Both" Foreground="{Binding Background, ElementName=MainGrid}" IsSnapToTickEnabled="True" ValueChanged="SliderTime_ValueChanged" Cursor="Hand"/>
+                <CheckBox x:Name="hideRecalledTime" Content="Скрывать при повторном вызове" HorizontalAlignment="Left" Margin="40,301,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="13" FontFamily="Source Sans Pro" Style="{DynamicResource CheckBoxStyle}" Cursor="Hand" Checked="HideRecalledTime_Checked" Unchecked="HideRecalledTime_Unchecked"/>
+            </Grid>
+        </ScrollViewer>
+        <ScrollViewer x:Name="optionMonitoring" Margin="264,30,0,0" Visibility="Hidden">
+            <Grid Background="{Binding Background, ElementName=SettingsLayout}">
+                <Label x:Name="LabelMonitoring" Content="Общий лог" HorizontalAlignment="Left" Margin="40,6,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="LabelMonitoring_Copy" Content="Лог команд с пульта" HorizontalAlignment="Left" Margin="281,6,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light"/>
+                <TextBox x:Name="logAll" SelectionBrush="{Binding Background, ElementName=SettingsLayout}" IsReadOnly="True" HorizontalAlignment="Left" Height="235" Margin="40,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="227" Foreground="{Binding Background, ElementName=SettingsLayout}" BorderBrush="{Binding Background, ElementName=MainGrid}" Style="{DynamicResource TextBoxStyleOptions}"/>
+                <CheckBox x:Name="Autoscroll" Content="Автопрокручивание" HorizontalAlignment="Left" Margin="281,241,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontFamily="Source Sans Pro" Style="{DynamicResource CheckBoxStyle}" Cursor="Hand" Click="VoiceTempCheckBox_Click" IsChecked="True"/>
+                <Button x:Name="buttonPause" Content="Пауза" HorizontalAlignment="Left" Margin="281,336,0,0" VerticalAlignment="Top" Width="75" Click="ButtonPause_Click" Height="20" Foreground="{Binding Background, ElementName=MainGrid}" BorderBrush="{x:Null}" Cursor="Hand" Style="{DynamicResource OptionsButton}"/>
+                <Button x:Name="copyIRCode" Content="Скопировать список" HorizontalAlignment="Left" Margin="281,212,0,0" VerticalAlignment="Top" Width="207" Click="CopyIRCode_Click" Height="24" BorderBrush="{x:Null}" Foreground="{Binding Background, ElementName=MainGrid}" Cursor="Hand" Style="{DynamicResource OptionsButton}"/>
+                <CheckBox x:Name="EnableButton" Content="Обрабатывать команды с пульта" HorizontalAlignment="Left" Margin="281,272,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontFamily="Source Sans Pro" Style="{DynamicResource CheckBoxStyle}" Cursor="Hand" ToolTip="Отключение срабатывания на команды пульта" IsChecked="True" Checked="EnableButton_Checked" Unchecked="EnableButton_Unchecked"/>
+                <TextBox x:Name="serialWriter" BorderBrush="{Binding Background, ElementName=MainGrid}" SelectionBrush="{Binding Background, ElementName=SettingsLayout}" HorizontalAlignment="Left" Height="23" Margin="40,336,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="227" ToolTip="Отправка по Enter" KeyUp="SerialWriter_KeyUp" Foreground="{Binding Background, ElementName=SettingsLayout}" Style="{DynamicResource TextBoxStyleOptions}" VerticalContentAlignment="Center"/>
+                <Label x:Name="LabelMonitoring_Copy1" Content="Отправка команд" HorizontalAlignment="Left" Margin="40,291,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="LabelOtvet" Content="Ответа с утройства не было. Отправьте команду." HorizontalAlignment="Left" Margin="40,359,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="InfoCommand" Content="ⓘ" HorizontalAlignment="Left" Margin="230,292,0,0" VerticalAlignment="Top" FontSize="22" Cursor="Hand" ToolTip="" Foreground="{Binding Background, ElementName=MainGrid}" MouseUp="InfoCommand_MouseUp"/>
+                <ListBox x:Name="IRLog" BorderBrush="{Binding Background, ElementName=MainGrid}" Foreground="{Binding Background, ElementName=SettingsLayout}" HorizontalAlignment="Left" Height="161" VerticalAlignment="Top" Width="212" Margin="281,51,0,0">
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Использовать как...">
+                                <MenuItem x:Name="useAsTemp" Header="Отображение температуры" Click="useAsTemp_Click"/>
+                                <MenuItem x:Name="useAsTime" Header="Отображение времени" Click="useAsTime_Click" />
+                                <MenuItem x:Name="useAsSpace" Header="Эмуляция клавиши Space" Click="useAsSpace_Click"/>
+                                <MenuItem x:Name="useAsVUp" Header="Увеличение громкости" Click="useAsVUp_Click" />
+                                <MenuItem x:Name="useAsVDown" Header="Уменьшение громкости" Click="useAsVDown_Click" />
+                                <MenuItem x:Name="useAsF11" Header="Эмуляция клавиши F11" Click="useAsF11_Click" />
+                                <MenuItem x:Name="useAsMenu" Header="Эмуляция клавиши F11" Click="useAsMenu_Click" />
+                                <MenuItem x:Name="useAsWeather" Header="Отображение погоды" Click="useAsWeather_Click" />
+                            </MenuItem>
+                            <MenuItem x:Name="itemCopy" Header="Копировать" Click="itemCopy_Click"/>
+                            <MenuItem x:Name="itemDelete" Header="Удалить" Click="itemDelete_Click"/>
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
+
+                </ListBox>
+                <toast:Toast x:Name="serialToast" Duration="0:0:0:3" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" />
+
+            </Grid>
+        </ScrollViewer>
+        <ScrollViewer x:Name="optionAbout" Margin="264,30,0,0" Visibility="Collapsed">
+            <Grid Background="{Binding Background, ElementName=SettingsLayout}">
+                <Image Height="50" Width="50"  Source="Images/notification_basic.png" Stretch="Fill" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,27,0,0"/>
+                <Label Content="JWeather" Foreground="{Binding Background, ElementName=MainGrid}" HorizontalAlignment="Left" Margin="83,19,0,0" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+                <Label x:Name="VersionInfoLabel" Content="v1.0 Build 35 (15.03.2018)" Foreground="{Binding Background, ElementName=MainGrid}" HorizontalAlignment="Left" Margin="83,36,0,0" VerticalAlignment="Top"/>
+                <Label Content="Copyright © 2017-2018 Jonik Evseenko" Foreground="{Binding Background, ElementName=MainGrid}" HorizontalAlignment="Left" Margin="83,51,0,0" VerticalAlignment="Top"/>
+                <Image Height="30" Width="30"  Source="Images/vk.png" Cursor="Hand" ToolTip="https://vk.com/jonik_evseenko" MouseUp="Image_MouseUp_1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="468,384,0,0"/>
+                <Label Content="История изменений" HorizontalAlignment="Left" Margin="28,388,0,0" VerticalAlignment="Top" Foreground="#FF0023FF" Cursor="Hand" TextOptions.TextHintingMode="Animated" MouseUp="Label_MouseUp"/>
+                <Image Height="30" Width="30"  Source="Images/instagram.png" Cursor="Hand" ToolTip="https://www.instagram.com/jonikevseenko/" MouseUp="Image_MouseUp" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="433,384,0,0"/>
+                <RichTextBox BorderBrush="{Binding Background, ElementName=MainGrid}" x:Name="whatsNew" HorizontalAlignment="Left" SelectionBrush="{Binding Background, ElementName=SettingsLayout}" Foreground="{Binding Background, ElementName=SettingsLayout}" Height="297" Margin="28,82,0,0" VerticalAlignment="Top" Width="486" Visibility="Hidden">
+                    <FlowDocument>
+                        <Paragraph>
+                            <Run Language="ru-ru"/>
+                        </Paragraph>
+                    </FlowDocument>
+                </RichTextBox>
+            </Grid>
+        </ScrollViewer>
+        <ScrollViewer x:Name="optionComands" Margin="264,30,0,0" Visibility="Hidden">
+            <Grid Background="{Binding Background, ElementName=SettingsLayout}" Margin="0,0,0,50">
+                <Label x:Name="LabelMinTempNotify_Copy1" Content="Команда полноэкранного режима отображения температуры" HorizontalAlignment="Left" Margin="40,10,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <TextBox x:Name="TextBoxCTemp" HorizontalAlignment="Left" SelectionBrush="{Binding Background, ElementName=SettingsLayout}" BorderBrush="{Binding Background, ElementName=MainGrid}" Foreground="{Binding Background, ElementName=SettingsLayout}" Height="23" Margin="40,45,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Style="{DynamicResource TextBoxStyleOptions}"/>
+                <Button x:Name="buttonCTemp" Foreground="{Binding Background, ElementName=MainGrid}" Style="{DynamicResource OptionsButton}" Content="Изменить" HorizontalAlignment="Left" Margin="165,45,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="buttonCTemp_Click" Cursor="Hand" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="LabelMinTempNotify_Copy2" Content="Команда полноэкранного режима отображения даты и времени" HorizontalAlignment="Left" Margin="40,73,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <TextBox x:Name="TextBoxCTime" HorizontalAlignment="Left" SelectionBrush="{Binding Background, ElementName=SettingsLayout}" BorderBrush="{Binding Background, ElementName=MainGrid}" Foreground="{Binding Background, ElementName=SettingsLayout}" Height="23" Margin="40,108,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Style="{DynamicResource TextBoxStyleOptions}"/>
+                <Button x:Name="buttonCTime" Foreground="{Binding Background, ElementName=MainGrid}" Content="Изменить" HorizontalAlignment="Left" Margin="165,108,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="buttonCTime_Click" Cursor="Hand" Style="{DynamicResource OptionsButton}" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="LabelMinTempNotify_Copy3" Content="Команда эмуляции нажатия клавиши Space" HorizontalAlignment="Left" Margin="40,136,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <TextBox x:Name="TextBoxCSpace" HorizontalAlignment="Left" SelectionBrush="{Binding Background, ElementName=SettingsLayout}" BorderBrush="{Binding Background, ElementName=MainGrid}" Foreground="{Binding Background, ElementName=SettingsLayout}" Height="23" Margin="40,171,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Style="{DynamicResource TextBoxStyleOptions}"/>
+                <Button x:Name="buttonCSpace" Foreground="{Binding Background, ElementName=MainGrid}" Content="Изменить" HorizontalAlignment="Left" Margin="165,171,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="buttonCSpace_Click" Cursor="Hand" Style="{DynamicResource OptionsButton}" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="LabelMinTempNotify_Copy4" Content="Команда уменьшения громкости" HorizontalAlignment="Left" Margin="40,262,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <TextBox x:Name="TextBoxCVolumeUp" HorizontalAlignment="Left" SelectionBrush="{Binding Background, ElementName=SettingsLayout}" BorderBrush="{Binding Background, ElementName=MainGrid}" Foreground="{Binding Background, ElementName=SettingsLayout}" Height="23" Margin="40,234,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Style="{DynamicResource TextBoxStyleOptions}"/>
+                <Button x:Name="buttonCVUp" Foreground="{Binding Background, ElementName=MainGrid}" Content="Изменить" HorizontalAlignment="Left" Margin="165,234,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="buttonCVUp_Click" Cursor="Hand" Style="{DynamicResource OptionsButton}" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="LabelMinTempNotify_Copy5" Content="Команда увеличения громкости" HorizontalAlignment="Left" Margin="40,199,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <TextBox x:Name="TextBoxCVolumeDown" HorizontalAlignment="Left" SelectionBrush="{Binding Background, ElementName=SettingsLayout}" BorderBrush="{Binding Background, ElementName=MainGrid}" Foreground="{Binding Background, ElementName=SettingsLayout}" Height="23" Margin="40,297,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Style="{DynamicResource TextBoxStyleOptions}"/>
+                <Button x:Name="buttonCVDown" Foreground="{Binding Background, ElementName=MainGrid}" Content="Изменить" HorizontalAlignment="Left" Margin="165,297,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="buttonCVDown_Click" Cursor="Hand" Style="{DynamicResource OptionsButton}" FontFamily="Source Sans Pro Light"/>
+                <Button x:Name="cancelComandTemp" Cursor="Hand" FontFamily="Source Sans Pro Light" Style="{DynamicResource OptionsButton}" Foreground="{Binding Background, ElementName=MainGrid}" Content="Отмена" HorizontalAlignment="Left" Margin="245,45,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="cancelComandTemp_Click" Visibility="Hidden"/>
+                <Button x:Name="cancelComandTime" Cursor="Hand" FontFamily="Source Sans Pro Light" Style="{DynamicResource OptionsButton}" Foreground="{Binding Background, ElementName=MainGrid}" Content="Отмена" HorizontalAlignment="Left" Margin="245,108,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="cancelComandTime_Click" Visibility="Hidden"/>
+                <Button x:Name="cancelComandSpace" Cursor="Hand" FontFamily="Source Sans Pro Light" Style="{DynamicResource OptionsButton}" Foreground="{Binding Background, ElementName=MainGrid}" Content="Отмена" HorizontalAlignment="Left" Margin="245,171,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="cancelComandSpace_Click" Visibility="Hidden"/>
+                <Button x:Name="cancelComandVUp" Cursor="Hand" FontFamily="Source Sans Pro Light" Style="{DynamicResource OptionsButton}" Foreground="{Binding Background, ElementName=MainGrid}" Content="Отмена" HorizontalAlignment="Left" Margin="245,234,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="cancelComandVUp_Click" Visibility="Hidden"/>
+                <Button x:Name="cancelComandVDown" Cursor="Hand" FontFamily="Source Sans Pro Light" Style="{DynamicResource OptionsButton}" Foreground="{Binding Background, ElementName=MainGrid}" Content="Отмена" HorizontalAlignment="Left" Margin="245,297,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="cancelComandVDown_Click" Visibility="Hidden"/>
+                <Button x:Name="cancelComandWeather" Cursor="Hand" FontFamily="Source Sans Pro Light" Style="{DynamicResource OptionsButton}" Foreground="{Binding Background, ElementName=MainGrid}" Content="Отмена" HorizontalAlignment="Left" Margin="245,484,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="cancelComandWeather_Click" Visibility="Hidden"/>
+                <Label x:Name="LabelMinTempNotify_Copy6" Content="Команда эмуляции нажатия клавиши F11" HorizontalAlignment="Left" Margin="40,325,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <TextBox x:Name="TextBoxCF11" HorizontalAlignment="Left" SelectionBrush="{Binding Background, ElementName=SettingsLayout}" BorderBrush="{Binding Background, ElementName=MainGrid}" Foreground="{Binding Background, ElementName=SettingsLayout}" Height="23" Margin="40,360,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Style="{DynamicResource TextBoxStyleOptions}"/>
+                <Button x:Name="buttonCF11" Foreground="{Binding Background, ElementName=MainGrid}" Content="Изменить" HorizontalAlignment="Left" Margin="165,360,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="buttonCF11_Click" Cursor="Hand" Style="{DynamicResource OptionsButton}" FontFamily="Source Sans Pro Light"/>
+                <Button x:Name="cancelComandF11" FontFamily="Source Sans Pro Light" Style="{DynamicResource OptionsButton}" Foreground="{Binding Background, ElementName=MainGrid}" Content="Отмена" HorizontalAlignment="Left" Margin="245,360,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="cancelComandF11_Click" Visibility="Hidden" Cursor="Hand"/>
+                <toast:Toast x:Name="comandToast" Duration="0:0:0:3" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" BorderThickness="0" />
+                <Image x:Name="alertCTemp" HorizontalAlignment="Left" Height="23" Margin="12,45,0,0" VerticalAlignment="Top" Width="23" Source="Images/alert-circle.png" Stretch="Fill" Visibility="Hidden"/>
+                <Image x:Name="alertCTime" HorizontalAlignment="Left" Height="23" Margin="12,108,0,0" VerticalAlignment="Top" Width="23" Source="Images/alert-circle.png" Stretch="Fill" Visibility="Hidden"/>
+                <Image x:Name="alertCSpace" HorizontalAlignment="Left" Height="23" Margin="12,171,0,0" VerticalAlignment="Top" Width="23" Source="Images/alert-circle.png" Stretch="Fill" Visibility="Hidden"/>
+                <Image x:Name="alertCVUp" HorizontalAlignment="Left" Height="23" Margin="12,234,0,0" VerticalAlignment="Top" Width="23" Source="Images/alert-circle.png" Stretch="Fill" Visibility="Hidden"/>
+                <Image x:Name="alertCVDown" HorizontalAlignment="Left" Height="23" Margin="12,297,0,0" VerticalAlignment="Top" Width="23" Source="Images/alert-circle.png" Stretch="Fill" Visibility="Hidden"/>
+                <Image x:Name="alertCF11" HorizontalAlignment="Left" Height="23" Margin="12,360,0,0" VerticalAlignment="Top" Width="23" Source="Images/alert-circle.png" Stretch="Fill" Visibility="Hidden"/>
+                <Image x:Name="alertCMenu" HorizontalAlignment="Left" Height="23" Margin="12,423,0,0" VerticalAlignment="Top" Width="23" Source="Images/alert-circle.png" Stretch="Fill" Visibility="Hidden"/>
+                <Image x:Name="alertCWeather" HorizontalAlignment="Left" Height="23" Margin="12,484,0,0" VerticalAlignment="Top" Width="23" Source="Images/alert-circle.png" Stretch="Fill" Visibility="Hidden"/>
+                <Label x:Name="LabelMinTempNotify_Copy7" Content="Команда входа в меню" HorizontalAlignment="Left" Margin="40,388,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <TextBox x:Name="TextBoxCMenu" HorizontalAlignment="Left" SelectionBrush="{Binding Background, ElementName=SettingsLayout}" BorderBrush="{Binding Background, ElementName=MainGrid}" Foreground="{Binding Background, ElementName=SettingsLayout}" Height="23" Margin="40,423,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Style="{DynamicResource TextBoxStyleOptions}"/>
+                <Button x:Name="buttonCMenu" Foreground="{Binding Background, ElementName=MainGrid}" Content="Изменить" HorizontalAlignment="Left" Margin="165,423,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="buttonCMenu_Click" Cursor="Hand" Style="{DynamicResource OptionsButton}" FontFamily="Source Sans Pro Light"/>
+                <Button x:Name="cancelComandMenu" FontFamily="Source Sans Pro Light" Style="{DynamicResource OptionsButton}" Foreground="{Binding Background, ElementName=MainGrid}" Content="Отмена" HorizontalAlignment="Left" Margin="245,423,0,0" VerticalAlignment="Top" Width="75" Height="23" Cursor="Hand" Visibility="Hidden" Click="cancelComandMenu_Click"/>
+                <Label x:Name="LabelMinTempNotify_Copy8" Content="Команда погоды" HorizontalAlignment="Left" Margin="40,449,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <TextBox x:Name="TextBoxCWeather" HorizontalAlignment="Left" SelectionBrush="{Binding Background, ElementName=SettingsLayout}" BorderBrush="{Binding Background, ElementName=MainGrid}" Foreground="{Binding Background, ElementName=SettingsLayout}" Height="23" Margin="40,484,0,-7" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Style="{DynamicResource TextBoxStyleOptions}"/>
+                <Button x:Name="buttonCWeather" Foreground="{Binding Background, ElementName=MainGrid}" Content="Изменить" HorizontalAlignment="Left" Margin="165,484,0,-7" VerticalAlignment="Top" Width="75" Height="23" Click="buttonCWeather_Click" Cursor="Hand" Style="{DynamicResource OptionsButton}" FontFamily="Source Sans Pro Light" Padding="1"/>
+            </Grid>
+        </ScrollViewer>
+        <ScrollViewer x:Name="optionWeather" Margin="264,30,0,0">
+            <Grid Background="{Binding Background, ElementName=SettingsLayout}">
+
+                <Label x:Name="LabelSystemOptions2341" Content="Основные" HorizontalAlignment="Left" Margin="40,10,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="LabelTimeWeatherUpdate" Content="Обновлять погоду каждые 10 минут" HorizontalAlignment="Left" Margin="40,138,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <Slider x:Name="sliderWeatherTimeUpdate" HorizontalAlignment="Left" Height="40" Width="178" Margin="57,173,0,0" VerticalAlignment="Top" SmallChange="1" Minimum="1" TickPlacement="Both" Foreground="{Binding Background, ElementName=MainGrid}" IsSnapToTickEnabled="True" Cursor="Hand" Maximum="5" Value="10" ValueChanged="sliderWeatherTimeUpdate_ValueChanged"/>
+                <Label x:Name="LabelMonitoring_Copy2" Content="Единицы измерения" HorizontalAlignment="Left" Margin="40,218,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="LabelMinTempNotify_Copy9" Content="Единица измерения скорости ветра" HorizontalAlignment="Left" Margin="40,263,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,298,0,0" Height="60">
+                    <RadioButton x:Name="radioButtonUnitWMS" Style="{DynamicResource RadioButtonStyle}" Foreground="{Binding Background, ElementName=MainGrid}" Content="Метры в секунду" HorizontalAlignment="Left" Margin="59,0,0,0" VerticalAlignment="Top" Height="20" FontFamily="Source Sans Pro Light" FontSize="13" Checked="radioButtonUnitWMS_Checked"/>
+                    <RadioButton x:Name="radioButtonUnitWKH" Style="{DynamicResource RadioButtonStyle}" Foreground="{Binding Background, ElementName=MainGrid}" Content="Киллометры в час" HorizontalAlignment="Left" Margin="59,25,0,0" VerticalAlignment="Top" Height="20" FontFamily="Source Sans Pro Light" FontSize="13" Checked="radioButtonUnitWKH_Checked"/>
+                </Grid>
+                <Label x:Name="LabelMinTempNotify_Copy10" Content="Единица измерения атмосферного давления" HorizontalAlignment="Left" Margin="40,363,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="LabelTimeWeatherUpdate_Copy" Content="Местоположение" HorizontalAlignment="Left" Margin="40,50,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,398,0,0" Height="60">
+                    <RadioButton x:Name="radioButtonUnitAPG" Style="{DynamicResource RadioButtonStyle}" Foreground="{Binding Background, ElementName=MainGrid}" Content="Гектопаскаль (гПа)" HorizontalAlignment="Left" Margin="58,0,0,0" VerticalAlignment="Top" Height="20" FontFamily="Source Sans Pro Light" FontSize="13" Checked="radioButtonUnitAPG_Checked"/>
+                    <RadioButton x:Name="radioButtonUnitAPR" Style="{DynamicResource RadioButtonStyle}" Foreground="{Binding Background, ElementName=MainGrid}" Content="Миллиметр ртутного столба (мм рт. ст.)" HorizontalAlignment="Left" Margin="58,25,0,0" VerticalAlignment="Top" Height="20" FontFamily="Source Sans Pro Light" FontSize="13" Checked="radioButtonUnitAPR_Checked"/>
+                </Grid>
+                <CheckBox x:Name="autoLocation" Content="Определять автоматически" HorizontalAlignment="Left" Margin="40,80,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="13" FontFamily="Source Sans Pro" Style="{DynamicResource CheckBoxStyle}" Cursor="Hand" Click="autoLocation_Click"/>
+                <Label x:Name="coordinatesLabel" Content="Местоположение не определено" HorizontalAlignment="Left" Margin="57,110,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontFamily="Source Sans Pro Light" FontSize="14"/>
+                <Grid x:Name="LatLonGrid" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="273,58,0,0">
+                    <TextBox x:Name="latEdit" HorizontalAlignment="Left" Height="23" Margin="0,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="76" BorderBrush="White" Background="{x:Null}" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleOptions}" SelectionBrush="White" FontSize="14" TextChanged="coordinatesChanged"/>
+                    <Label x:Name="coordinatesLabel_Copy" Content="Широта" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontFamily="Source Sans Pro Light" FontSize="14"/>
+                    <TextBox x:Name="lonEdit" HorizontalAlignment="Left" Height="23" Margin="100,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="76" BorderBrush="White" Background="{x:Null}" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleOptions}" SelectionBrush="White" FontSize="14" TextChanged="coordinatesChanged"/>
+                    <Label x:Name="coordinatesLabel_Copy1" Content="Долгота" HorizontalAlignment="Left" Margin="110,0,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontFamily="Source Sans Pro Light" FontSize="14"/>
+                    <Image x:Name="coorButton" HorizontalAlignment="Left" Height="25" Margin="76,0,0,0" VerticalAlignment="Top" Width="25" Source="Images/place.png" Cursor="Hand" MouseUp="coorButton_MouseUp" ToolTip="Определить по координатам сети"/>
+
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+        <ScrollViewer x:Name="optionMain" Margin="264,30,0,0" Visibility="Hidden">
+            <Grid Background="{Binding Background, ElementName=SettingsLayout}">
+
+                <CheckBox  x:Name="autorunCheckbox" Content="Автозапуск" HorizontalAlignment="Left" Margin="40,49,0,0" VerticalAlignment="Top" Checked="AutorunCheckbox_Checked" Unchecked="AutorunCheckbox_Unchecked" Foreground="{Binding Background, ElementName=MainGrid}" Cursor="Hand" ToolTip="Установите флаг для автоматического запуска программы при старте системы." FontFamily="Source Sans Pro" FontSize="13" Style="{DynamicResource CheckBoxStyle}"/>
+                <Label x:Name="LabelSystemOptions" Content="Системные настройки" HorizontalAlignment="Left" Margin="40,9,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light"/>
+                <ComboBox x:Name="ListPorts" HorizontalAlignment="Left" Margin="40,175,0,0" VerticalAlignment="Top" Width="120" IsReadOnly="True" Foreground="{Binding Background, ElementName=SettingsLayout}"/>
+                <Label x:Name="LabelDefPort" Content="Порт по умолчанию" HorizontalAlignment="Left" Margin="40,140,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <Button x:Name="UpdatePortsButton" Content="Обновить" HorizontalAlignment="Left" Margin="165,175,0,0" VerticalAlignment="Top" Width="75" Height="22" Style="{DynamicResource RegularButton}" Cursor="Hand" Click="UpdatePortsButton_Click" Foreground="{Binding Background, ElementName=MainGrid}"/>
+
+                <Slider x:Name="sliderNotifyMinTemp" HorizontalAlignment="Left" Height="40" Width="372" Margin="40,307,0,0" VerticalAlignment="Top" SmallChange="1" TickPlacement="Both" Foreground="{Binding Background, ElementName=MainGrid}" IsSnapToTickEnabled="True" Cursor="Hand" Maximum="50" ValueChanged="SliderNotifyMinTemp_ValueChanged"/>
+                <Slider x:Name="sliderNotifyMaxTemp" HorizontalAlignment="Left" Height="40" Width="372" Margin="40,424,0,-73" VerticalAlignment="Top" SmallChange="1" TickPlacement="Both" Foreground="{Binding Background, ElementName=MainGrid}" IsSnapToTickEnabled="True" Cursor="Hand" ValueChanged="SliderNotifyMaxTemp_ValueChanged" Maximum="50"/>
+
+                <CheckBox  x:Name="notifyMinTempCheckBox" Content="Уведомлять при снижении температуры заданного порога" HorizontalAlignment="Left" Margin="40,277,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" Cursor="Hand" Style="{DynamicResource CheckBoxStyle}" FontFamily="Source Sans Pro" FontSize="13" Checked="notifyMinTempCheckBox_Checked" Unchecked="notifyMinTempCheckBox_Unchecked"/>
+                <Label x:Name="NotifyLabel" Content="Индикация и уведомления" HorizontalAlignment="Left" Margin="40,202,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="24" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="LabelMinTempNotify" Content="Минимальная температура" HorizontalAlignment="Left" Margin="40,247,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="indicatorMin" Content="0°" HorizontalAlignment="Left" Margin="17,307,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="indicatorMax" Content="27°" HorizontalAlignment="Left" Margin="417,307,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="LabelMaxTempNotify" Content="Максимальная температура" HorizontalAlignment="Left" Margin="40,352,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <CheckBox  x:Name="notifyMaxTempCheckBox" Content="Уведомлять при превышении температуры заданного порога" HorizontalAlignment="Left" Margin="40,382,0,0" VerticalAlignment="Top" Checked="notifyMaxTempCheckBox_Checked" Unchecked="notifyMaxTempCheckBox_Unchecked" Foreground="{Binding Background, ElementName=MainGrid}" Cursor="Hand" Style="{DynamicResource CheckBoxStyle}" FontFamily="Source Sans Pro" FontSize="13"/>
+                <Label x:Name="indicatorMin2" Content="0°" HorizontalAlignment="Left" Margin="17,424,0,-63" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="indicatorMax2" Content="50°" HorizontalAlignment="Left" Margin="417,424,0,-63" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <Label x:Name="LabelMinTempNotify_Copy" Content="Периодичность записи данных в лог" HorizontalAlignment="Left" Margin="40,74,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=MainGrid}" FontSize="16" FontFamily="Source Sans Pro Light"/>
+                <ComboBox x:Name="changeTimeComboBox" HorizontalAlignment="Left" Foreground="{Binding Background, ElementName=SettingsLayout}" Margin="40,109,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="changeTimeComboBox_SelectionChanged">
+                    <ComboBoxItem Content="15 минут"/>
+                    <ComboBoxItem Content="30 минут"/>
+                    <ComboBoxItem Content="1 час"/>
+                </ComboBox>
+            </Grid>
+        </ScrollViewer>
+        <Grid x:Name="MainGrid" HorizontalAlignment="Left" VerticalAlignment="Center" Width="264" Background="White" Margin="0,1,0,0" Height="519">
+            <toast:Toast x:Name="myToast" Message="Настройки сохранены!" Duration="0:0:0:3" Margin="0,0,0,40" />
+            <Label x:Name="titleOptions" Content="Настройки" HorizontalAlignment="Left" Margin="35,23,0,0" VerticalAlignment="Top" Foreground="{Binding Background, ElementName=SettingsLayout}" FontSize="24" FontFamily="Source Sans Pro Light" Grid.ColumnSpan="2"/>
+            <Button x:Name="ButtonBasic" Style="{StaticResource OptionsButton}" VerticalAlignment="Top" Width="264" Height="43" Cursor="Hand" Margin="0,68,0,0" Foreground="{Binding Background, ElementName=SettingsLayout}" FontFamily="Source Sans Pro" FontSize="16" HorizontalAlignment="Left" Grid.ColumnSpan="2" Click="ButtonBasic_Click" BorderBrush="{x:Null}" Background="{x:Null}">
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Left" Width="182">
+                    <TextBlock x:Name="labelBasic" Text="Основные" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3,0,0" Width="78"/>
+                </Grid>
+            </Button>
+            <Button x:Name="ButtonFS1" Style="{StaticResource OptionsButton}" VerticalAlignment="Top" Width="264" Height="43" Cursor="Hand" Margin="0,111,0,0" Foreground="{Binding Background, ElementName=SettingsLayout}" FontFamily="Source Sans Pro" FontSize="16" HorizontalAlignment="Left" Grid.ColumnSpan="2" BorderBrush="{x:Null}" Click="ButtonFS1_Click" Background="{x:Null}">
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Left" Width="182">
+                    <TextBlock x:Name="labelFS1" Text="Температура/Влажность" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3,-30,0" Width="212"/>
+                </Grid>
+            </Button>
+            <Button x:Name="ButtonFS2" Style="{StaticResource OptionsButton}"  VerticalAlignment="Top" Width="264" Height="43" Cursor="Hand" Margin="0,154,0,0" Foreground="{Binding Background, ElementName=SettingsLayout}" FontFamily="Source Sans Pro" FontSize="16" HorizontalAlignment="Left" Grid.ColumnSpan="2" BorderBrush="{x:Null}" Click="ButtonFS2_Click" Background="{x:Null}">
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Left" Width="182">
+                    <TextBlock x:Name="labelFS2" Text="Время" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3,-23,0" Width="205"/>
+                </Grid>
+            </Button>
+            <Button x:Name="ButtonChangeTemp" Style="{StaticResource OptionsButton}" VerticalAlignment="Top" Width="264" Height="43" Cursor="Hand" Margin="0,197,0,0" Foreground="{Binding Background, ElementName=SettingsLayout}" FontFamily="Source Sans Pro" FontSize="16" HorizontalAlignment="Left" Grid.ColumnSpan="2" BorderBrush="{x:Null}" Click="ButtonChangeTemp_Click" Background="{x:Null}">
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Left" Width="182">
+                    <TextBlock x:Name="labelVolume" Text="Регулировка громкости" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3,-22,0" Width="204"/>
+                </Grid>
+            </Button>
+            <Button x:Name="ButtonMonitoring" Style="{StaticResource OptionsButton}" VerticalAlignment="Top" Width="264" Height="43" Cursor="Hand" Margin="0,240,0,0" Foreground="{Binding Background, ElementName=SettingsLayout}" FontFamily="Source Sans Pro" FontSize="16" HorizontalAlignment="Left" BorderBrush="{x:Null}" Click="ButtonMonitoring_Click" Background="{x:Null}">
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Left" Width="182">
+                    <TextBlock x:Name="labelMonitoring" Text="Мониторинг Serial" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3,-22,0" Width="204"/>
+                </Grid>
+            </Button>
+            <Button x:Name="ButtonAbout" Style="{StaticResource OptionsButton}" VerticalAlignment="Top" Width="264" Height="43" Cursor="Hand" Margin="0,369,0,0" Foreground="{Binding Background, ElementName=SettingsLayout}" FontFamily="Source Sans Pro" FontSize="16" HorizontalAlignment="Left" BorderBrush="{x:Null}" Click="ButtonAbout_Click" Background="{x:Null}">
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Left" Width="182">
+                    <TextBlock x:Name="labelAbout" Text="О программе" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3,-22,0" Width="204"/>
+                </Grid>
+            </Button>
+            <Button x:Name="ButtonCommands" Style="{StaticResource OptionsButton}" VerticalAlignment="Top" Width="264" Height="43" Cursor="Hand" Margin="0,283,0,0" Foreground="{Binding Background, ElementName=SettingsLayout}" FontFamily="Source Sans Pro" FontSize="16" HorizontalAlignment="Left" BorderBrush="{x:Null}" Click="ButtonCommands_Click" Background="{x:Null}">
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Left" Width="182">
+                    <TextBlock x:Name="labelComand" Text="Команды" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3,-22,0" Width="204"/>
+                </Grid>
+            </Button>
+            <Button x:Name="ButtonWeather" Style="{StaticResource OptionsButton}" VerticalAlignment="Top" Width="264" Height="43" Cursor="Hand" Margin="0,326,0,0" Foreground="{Binding Background, ElementName=SettingsLayout}" FontFamily="Source Sans Pro" FontSize="16" HorizontalAlignment="Left" BorderBrush="{x:Null}" Click="ButtonWeather_Click" Background="{x:Null}">
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Left" Width="182">
+                    <TextBlock x:Name="labelWeather" Text="Погода" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3,-22,0" Width="204"/>
+                </Grid>
+            </Button>
+            <Button x:Name="saveSettings" Style="{StaticResource OptionsButton}" HorizontalAlignment="Left" Margin="156,446,0,0" VerticalAlignment="Bottom" Width="98" Click="Button_Click" Background="#00000000" BorderBrush="{x:Null}" Foreground="{Binding Background, ElementName=SettingsLayout}" BorderThickness="0" Height="40" Cursor="Hand" Content="Сохранить"/>
+        </Grid>
+
+
+    </Grid>
+</Window>

@@ -1,0 +1,159 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="JWeather.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Autorun" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="voiceTemp" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="delayTemp" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="opacityVolume" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">80</Value>
+    </Setting>
+    <Setting Name="tempChangeTime" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">30</Value>
+    </Setting>
+    <Setting Name="voiceMaxTemp" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="voiceMaxHum" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="voiceMinTemp" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="voiceMinHum" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="opacityTemp" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">65</Value>
+    </Setting>
+    <Setting Name="opacityTime" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">55</Value>
+    </Setting>
+    <Setting Name="voiceTime" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="delayTime" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">4</Value>
+    </Setting>
+    <Setting Name="voiceDoW" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="intellectualVoice" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="voiceDate" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="voiceHourMin" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="voiceHum" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="defaultPort" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Авто</Value>
+    </Setting>
+    <Setting Name="delayVolume" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="hideWhenRecalledTime" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="hideWhenRecalledTemp" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="minNotificationTemp" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">21</Value>
+    </Setting>
+    <Setting Name="maxNotificationTemp" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">31</Value>
+    </Setting>
+    <Setting Name="notifyMaxTemp" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="notifyMinTemp" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="comandTemp" Type="System.String" Scope="User">
+      <Value Profile="(Default)">6B14</Value>
+    </Setting>
+    <Setting Name="comandTime" Type="System.String" Scope="User">
+      <Value Profile="(Default)">235C</Value>
+    </Setting>
+    <Setting Name="comandSpace" Type="System.String" Scope="User">
+      <Value Profile="(Default)">7D02</Value>
+    </Setting>
+    <Setting Name="comandVolumeUp" Type="System.String" Scope="User">
+      <Value Profile="(Default)">B74</Value>
+    </Setting>
+    <Setting Name="comandVolumeDown" Type="System.String" Scope="User">
+      <Value Profile="(Default)">730C</Value>
+    </Setting>
+    <Setting Name="comandF11" Type="System.String" Scope="User">
+      <Value Profile="(Default)">5DA2</Value>
+    </Setting>
+    <Setting Name="comandMenu" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1768</Value>
+    </Setting>
+    <Setting Name="comandMenuRight" Type="System.String" Scope="User">
+      <Value Profile="(Default)">334C</Value>
+    </Setting>
+    <Setting Name="comandMenuLeft" Type="System.String" Scope="User">
+      <Value Profile="(Default)">532C</Value>
+    </Setting>
+    <Setting Name="comandMenuEnter" Type="System.String" Scope="User">
+      <Value Profile="(Default)">136C</Value>
+    </Setting>
+    <Setting Name="LockingWindow" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="comandWeather" Type="System.String" Scope="User">
+      <Value Profile="(Default)">354A</Value>
+    </Setting>
+    <Setting Name="weatherUpdate" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="unitWind" Type="System.String" Scope="User">
+      <Value Profile="(Default)">kmh</Value>
+    </Setting>
+    <Setting Name="unitAP" Type="System.String" Scope="User">
+      <Value Profile="(Default)">mm</Value>
+    </Setting>
+    <Setting Name="opacityWeather" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0.7</Value>
+    </Setting>
+    <Setting Name="delayWeather" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="hideWhenRecalledWeather" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AutoLocation" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="Latitude" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="Longitude" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="comandFan" Type="System.String" Scope="User">
+      <Value Profile="(Default)">750A</Value>
+    </Setting>
+    <Setting Name="speedFan" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">255</Value>
+    </Setting>
+    <Setting Name="chartMode" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="pin" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1234</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
